@@ -1,0 +1,800 @@
+{
+ "doctype": "DocType",
+ "name": "Recurring Entry Template",
+ "module": "Neotec Recurring",
+ "is_submittable": 1,
+ "autoname": "naming_series:",
+ "title_field": "title",
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "quick_entry": 0,
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "REC-.YYYY.-",
+   "default": "REC-.YYYY.-",
+   "hidden": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "What is this for?",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Example: Riyadh office rent, Al Rajhi lease"
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "remember_last_selected_value": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nPaused\nCompleted\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "source_section",
+   "fieldtype": "Section Break",
+   "label": "Source document",
+   "description": "Where this cost came from. Optional, but it links the schedule back to the original entry."
+  },
+  {
+   "fieldname": "source_doctype",
+   "fieldtype": "Select",
+   "label": "Document type",
+   "options": "\nSales Invoice\nPurchase Invoice\nPayment Entry\nJournal Entry\nExpense Claim"
+  },
+  {
+   "fieldname": "source_document",
+   "fieldtype": "Dynamic Link",
+   "label": "Document",
+   "options": "source_doctype",
+   "depends_on": "source_doctype"
+  },
+  {
+   "fieldname": "column_break_src",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "main_entry_date",
+   "fieldtype": "Date",
+   "label": "Main entry date",
+   "description": "Date of the original document. Fetched when you pick one."
+  },
+  {
+   "fieldname": "recurring_section",
+   "fieldtype": "Section Break",
+   "label": "Recurring"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Recurring start date",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "The day the benefit or service period begins."
+  },
+  {
+   "fieldname": "duration_value",
+   "fieldtype": "Int",
+   "label": "Duration",
+   "default": "6",
+   "depends_on": "eval:doc.duration_unit!='Until a date'",
+   "mandatory_depends_on": "eval:doc.duration_unit!='Until a date'"
+  },
+  {
+   "fieldname": "duration_unit",
+   "fieldtype": "Select",
+   "options": "Days\nMonths\nYears\nUntil a date",
+   "default": "Months",
+   "reqd": 1
+  },
+  {
+   "fieldname": "until_date",
+   "fieldtype": "Date",
+   "label": "Until",
+   "depends_on": "eval:doc.duration_unit=='Until a date'"
+  },
+  {
+   "fieldname": "column_break_rec",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ends_on",
+   "fieldtype": "Date",
+   "label": "Recurring end date",
+   "read_only": 1,
+   "bold": 1,
+   "depends_on": "",
+   "description": "Calculated from the start date and the duration."
+  },
+  {
+   "fieldname": "first_posting_date",
+   "fieldtype": "Date",
+   "label": "First posting date",
+   "read_only": 1,
+   "description": "Worked out from when entries are posted."
+  },
+  {
+   "fieldname": "number_of_postings",
+   "fieldtype": "Int",
+   "label": "Number of postings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "schedule_summary",
+   "fieldtype": "Small Text",
+   "read_only": 1,
+   "description": "Updates as you type. Press Preview Schedule to see every date."
+  },
+  {
+   "fieldname": "confirm_large_schedule",
+   "label": "Yes, create this many entries",
+   "fieldtype": "Check",
+   "depends_on": "eval:doc.occurrences_display>40",
+   "description": "Tick only if you really do want one journal entry per posting shown above."
+  },
+  {
+   "fieldname": "amount_section",
+   "fieldtype": "Section Break",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Total amount",
+   "options": "Company:company:default_currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount_type",
+   "fieldtype": "Select",
+   "label": "This amount is",
+   "options": "Per posting\nTotal for the whole term\nPer day\nPer year",
+   "default": "Per posting",
+   "reqd": 1
+  },
+  {
+   "fieldname": "split_by_days",
+   "fieldtype": "Check",
+   "label": "Weight periods by their length",
+   "depends_on": "eval:doc.amount_type=='Total for the whole term'",
+   "description": "On, a 31 day month carries more than a 30 day month. Off, every period is equal."
+  },
+  {
+   "fieldname": "column_break_amt_new",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amount_per_day",
+   "fieldtype": "Currency",
+   "label": "Amount per day",
+   "options": "Company:company:default_currency",
+   "read_only": 1,
+   "description": "Total divided by the days in the term."
+  },
+  {
+   "fieldname": "schedule_total",
+   "fieldtype": "Currency",
+   "label": "Schedule total",
+   "options": "Company:company:default_currency",
+   "read_only": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "schedule_total_days",
+   "fieldtype": "Int",
+   "label": "Days covered",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
+  },
+  {
+   "fieldname": "entry_mode",
+   "fieldtype": "Select",
+   "label": "Entry mode",
+   "options": "Simple\nAdvanced",
+   "default": "Simple",
+   "description": "Simple is one debit and one credit. Advanced allows tax lines and splits."
+  },
+  {
+   "fieldname": "party_section",
+   "fieldtype": "Section Break",
+   "label": "Party tracking",
+   "description": "Attach a customer, supplier or employee to every line of this entry."
+  },
+  {
+   "fieldname": "track_party",
+   "fieldtype": "Check",
+   "label": "Track a party on every line"
+  },
+  {
+   "fieldname": "tracked_party_type",
+   "fieldtype": "Select",
+   "label": "Party type",
+   "options": "\nCustomer\nSupplier\nEmployee",
+   "depends_on": "track_party",
+   "mandatory_depends_on": "track_party"
+  },
+  {
+   "fieldname": "tracked_party",
+   "fieldtype": "Dynamic Link",
+   "label": "Party",
+   "options": "tracked_party_type",
+   "depends_on": "tracked_party_type",
+   "mandatory_depends_on": "track_party"
+  },
+  {
+   "fieldname": "column_break_party_new",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tracked_party_name",
+   "fieldtype": "Data",
+   "label": "Name",
+   "read_only": 1,
+   "depends_on": "tracked_party"
+  },
+  {
+   "fieldname": "party_routing_note",
+   "fieldtype": "Small Text",
+   "read_only": 1,
+   "depends_on": "track_party",
+   "description": "Where the party will be recorded on each line."
+  },
+  {
+   "fieldname": "track_employee",
+   "fieldtype": "Check",
+   "label": "This is an employee cost",
+   "description": "Tick to attach an employee to every line of this entry.",
+   "hidden": 1,
+   "read_only": 1,
+   "depends_on": "",
+   "mandatory_depends_on": ""
+  },
+  {
+   "fieldname": "for_employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "depends_on": "",
+   "mandatory_depends_on": "",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_emp",
+   "fieldtype": "Column Break",
+   "hidden": 1,
+   "read_only": 1,
+   "depends_on": "",
+   "mandatory_depends_on": ""
+  },
+  {
+   "fieldname": "employee_display_name",
+   "fieldtype": "Data",
+   "label": "Name",
+   "read_only": 1,
+   "fetch_from": "for_employee.employee_name",
+   "depends_on": "",
+   "hidden": 1,
+   "mandatory_depends_on": ""
+  },
+  {
+   "fieldname": "employee_routing_note",
+   "fieldtype": "Small Text",
+   "read_only": 1,
+   "depends_on": "",
+   "description": "Where the employee will be recorded on each line.",
+   "hidden": 1,
+   "mandatory_depends_on": ""
+  },
+  {
+   "fieldname": "simple_section",
+   "fieldtype": "Section Break",
+   "depends_on": "eval:doc.entry_mode=='Simple'"
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Debit",
+   "options": "Account",
+   "mandatory_depends_on": "eval:doc.entry_mode=='Simple'"
+  },
+  {
+   "fieldname": "debit_party",
+   "fieldtype": "Dynamic Link",
+   "label": "Debit party",
+   "options": "debit_party_type",
+   "depends_on": "debit_party_type"
+  },
+  {
+   "fieldname": "debit_party_type",
+   "fieldtype": "Link",
+   "label": "Debit party type",
+   "options": "Party Type",
+   "read_only": 0,
+   "depends_on": "eval:doc.debit_takes_party",
+   "description": "Supplier, Employee, or any party type valid for this account."
+  },
+  {
+   "fieldname": "column_break_simple",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit",
+   "options": "Account",
+   "mandatory_depends_on": "eval:doc.entry_mode=='Simple'"
+  },
+  {
+   "fieldname": "credit_party",
+   "fieldtype": "Dynamic Link",
+   "label": "Credit party",
+   "options": "credit_party_type",
+   "depends_on": "credit_party_type"
+  },
+  {
+   "fieldname": "credit_party_type",
+   "fieldtype": "Link",
+   "label": "Credit party type",
+   "options": "Party Type",
+   "read_only": 0,
+   "depends_on": "eval:doc.credit_takes_party",
+   "description": "Supplier, Employee, or any party type valid for this account."
+  },
+  {
+   "fieldname": "debit_takes_party",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "credit_takes_party",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "advanced_section",
+   "fieldtype": "Section Break",
+   "depends_on": "eval:doc.entry_mode=='Advanced'"
+  },
+  {
+   "fieldname": "lines",
+   "fieldtype": "Table",
+   "label": "Lines",
+   "options": "Recurring Entry Line"
+  },
+  {
+   "fieldname": "dimension_section",
+   "fieldtype": "Section Break",
+   "label": "Cost Center and Dimensions",
+   "collapsible": 1,
+   "description": "Leave blank to use the company defaults. Set here to apply to every line."
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "options_section",
+   "fieldtype": "Section Break",
+   "label": "Options",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "post_on",
+   "fieldtype": "Select",
+   "label": "Post entries on",
+   "options": "End of each month\nSame day each month\nEnd of each quarter\nEvery day",
+   "default": "End of each month",
+   "description": "When each journal entry is dated. Month end suits most accruals."
+  },
+  {
+   "fieldname": "holiday_list",
+   "fieldtype": "Link",
+   "label": "Holiday list",
+   "options": "Holiday List",
+   "depends_on": ""
+  },
+  {
+   "fieldname": "column_break_opt_new",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "day_count_convention",
+   "fieldtype": "Select",
+   "label": "Day count basis",
+   "options": "Actual (Calendar Days)\nActual/365 Fixed\nActual/360\n30/360 US\n30E/360 (Eurobond)\n30E/360 (ISDA)",
+   "default": "Actual (Calendar Days)",
+   "description": "Only matters for day based amounts and day based terms. Leave as Actual unless the contract says otherwise."
+  },
+  {
+   "fieldname": "period_basis",
+   "label": "Each entry covers",
+   "fieldtype": "Select",
+   "options": "The period ending on the posting date\nThe period starting on the posting date",
+   "default": "The period ending on the posting date",
+   "description": "In arrears is the normal choice for accruals and for amortising something already paid. In advance suits rent or subscriptions billed for the period ahead."
+  },
+  {
+   "fieldname": "column_break_opt2_new",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "final_posting_basis",
+   "label": "Final entry posts on",
+   "fieldtype": "Select",
+   "options": "The normal schedule date\nThe day the term ends",
+   "default": "The normal schedule date",
+   "description": "A term ending mid month leaves a short final period. Posting it on the normal schedule date keeps the whole series consistent, and the coverage falls in the same month either way."
+  },
+  {
+   "fieldname": "auto_submit",
+   "fieldtype": "Check",
+   "label": "Submit entries automatically",
+   "default": "1",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "post_ahead_days",
+   "fieldtype": "Int",
+   "label": "Post ahead (days)",
+   "default": "0",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "user_remark",
+   "fieldtype": "Small Text",
+   "label": "Narration"
+  },
+  {
+   "fieldname": "posting_section",
+   "fieldtype": "Section Break",
+   "label": "Journal Entry Settings",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Data",
+   "label": "Journal Entry type",
+   "default": "Recurring Entry"
+  },
+  {
+   "fieldname": "je_naming_series",
+   "fieldtype": "Data",
+   "label": "Journal Entry naming series"
+  },
+  {
+   "fieldname": "column_break_post",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "is_provision",
+   "fieldtype": "Check",
+   "label": "This is a provision"
+  },
+  {
+   "fieldname": "auto_reverse",
+   "fieldtype": "Check",
+   "label": "Reverse it automatically",
+   "depends_on": "is_provision"
+  },
+  {
+   "fieldname": "reversal_offset_days",
+   "fieldtype": "Int",
+   "label": "Reverse after (days)",
+   "default": "1",
+   "depends_on": "auto_reverse"
+  },
+  {
+   "fieldname": "derived_section",
+   "fieldtype": "Section Break",
+   "label": "Calculated",
+   "collapsible": 1,
+   "description": "Filled in by the system from what you entered above."
+  },
+  {
+   "fieldname": "term_days_actual",
+   "fieldtype": "Int",
+   "label": "Actual days in term",
+   "read_only": 1
+  },
+  {
+   "fieldname": "first_period_days",
+   "fieldtype": "Int",
+   "label": "Days in first period",
+   "read_only": 1
+  },
+  {
+   "fieldname": "occurrences_display",
+   "fieldtype": "Int",
+   "label": "Number of postings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "schedule_section",
+   "fieldtype": "Section Break",
+   "label": "Schedule"
+  },
+  {
+   "fieldname": "schedule",
+   "fieldtype": "Table",
+   "label": "Schedule",
+   "options": "Recurring Entry Schedule",
+   "allow_on_submit": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Recurring Entry Template",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "covers_from",
+   "fieldtype": "Date",
+   "label": "Covers from",
+   "description": "The day the benefit or service period begins. Leave blank if it is the same as the first posting date.",
+   "hidden": 1,
+   "read_only": 1,
+   "depends_on": "",
+   "mandatory_depends_on": "",
+   "reqd": 0
+  },
+  {
+   "fieldname": "repeat_every_count",
+   "fieldtype": "Int",
+   "label": "Post every",
+   "default": "1",
+   "reqd": 0,
+   "hidden": 1,
+   "read_only": 1,
+   "depends_on": "",
+   "mandatory_depends_on": ""
+  },
+  {
+   "fieldname": "repeat_every_unit",
+   "fieldtype": "Select",
+   "options": "Day\nWeek\nMonth\nQuarter\nYear",
+   "default": "Month",
+   "reqd": 0,
+   "hidden": 1,
+   "read_only": 1,
+   "depends_on": "",
+   "mandatory_depends_on": ""
+  },
+  {
+   "fieldname": "continue_for_count",
+   "fieldtype": "Int",
+   "label": "Continue for",
+   "default": "12",
+   "depends_on": "",
+   "hidden": 1,
+   "read_only": 1,
+   "mandatory_depends_on": "",
+   "reqd": 0
+  },
+  {
+   "fieldname": "continue_for_unit",
+   "fieldtype": "Select",
+   "options": "Postings\nDays\nWeeks\nMonths\nYears\nUntil a date",
+   "default": "Postings",
+   "reqd": 0,
+   "hidden": 1,
+   "read_only": 1,
+   "depends_on": "",
+   "mandatory_depends_on": ""
+  },
+  {
+   "fieldname": "day_adjustment",
+   "fieldtype": "Select",
+   "label": "Move each date to",
+   "options": "None\nEnd of month\nNext working day\nPrevious working day",
+   "default": "None",
+   "depends_on": "",
+   "description": "Only applies to a monthly, quarterly or yearly rhythm.",
+   "hidden": 1,
+   "read_only": 1,
+   "mandatory_depends_on": "",
+   "reqd": 0
+  },
+  {
+   "fieldname": "term_inclusive",
+   "fieldtype": "Check",
+   "label": "Term includes the start date",
+   "default": "1",
+   "depends_on": "",
+   "hidden": 1,
+   "read_only": 1,
+   "mandatory_depends_on": "",
+   "reqd": 0
+  },
+  {
+   "fieldname": "ends_on_days",
+   "fieldtype": "Data",
+   "label": "That is",
+   "read_only": 1,
+   "depends_on": "",
+   "description": "Length of the term you have chosen.",
+   "hidden": 1,
+   "mandatory_depends_on": "",
+   "reqd": 0
+  },
+  {
+   "fieldname": "last_posting_date",
+   "fieldtype": "Date",
+   "label": "Last posting date",
+   "read_only": 1,
+   "hidden": 1,
+   "depends_on": "",
+   "mandatory_depends_on": "",
+   "reqd": 0
+  }
+ ],
+ "field_order": [
+  "naming_series",
+  "title",
+  "column_break_head",
+  "company",
+  "status",
+  "disabled",
+  "source_section",
+  "source_doctype",
+  "source_document",
+  "column_break_src",
+  "main_entry_date",
+  "recurring_section",
+  "start_date",
+  "duration_value",
+  "duration_unit",
+  "until_date",
+  "column_break_rec",
+  "ends_on",
+  "first_posting_date",
+  "number_of_postings",
+  "schedule_summary",
+  "confirm_large_schedule",
+  "amount_section",
+  "amount",
+  "amount_type",
+  "split_by_days",
+  "column_break_amt_new",
+  "amount_per_day",
+  "schedule_total",
+  "schedule_total_days",
+  "accounts_section",
+  "entry_mode",
+  "party_section",
+  "track_party",
+  "tracked_party_type",
+  "tracked_party",
+  "column_break_party_new",
+  "tracked_party_name",
+  "party_routing_note",
+  "track_employee",
+  "for_employee",
+  "column_break_emp",
+  "employee_display_name",
+  "employee_routing_note",
+  "simple_section",
+  "debit_account",
+  "debit_party",
+  "debit_party_type",
+  "column_break_simple",
+  "credit_account",
+  "credit_party",
+  "credit_party_type",
+  "debit_takes_party",
+  "credit_takes_party",
+  "advanced_section",
+  "lines",
+  "dimension_section",
+  "cost_center",
+  "project",
+  "options_section",
+  "post_on",
+  "holiday_list",
+  "column_break_opt_new",
+  "day_count_convention",
+  "period_basis",
+  "column_break_opt2_new",
+  "final_posting_basis",
+  "auto_submit",
+  "post_ahead_days",
+  "user_remark",
+  "posting_section",
+  "voucher_type",
+  "je_naming_series",
+  "column_break_post",
+  "is_provision",
+  "auto_reverse",
+  "reversal_offset_days",
+  "derived_section",
+  "term_days_actual",
+  "first_period_days",
+  "occurrences_display",
+  "schedule_section",
+  "schedule",
+  "amended_from",
+  "covers_from",
+  "repeat_every_count",
+  "repeat_every_unit",
+  "continue_for_count",
+  "continue_for_unit",
+  "day_adjustment",
+  "term_inclusive",
+  "ends_on_days",
+  "last_posting_date"
+ ],
+ "permissions": [
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1,
+   "report": 1,
+   "export": 1,
+   "email": 1,
+   "share": 1,
+   "print": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1,
+   "export": 1,
+   "email": 1,
+   "share": 1,
+   "print": 1
+  }
+ ]
+}

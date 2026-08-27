@@ -1,0 +1,83 @@
+{
+ "doctype": "DocType",
+ "name": "Recurring Entry Settings",
+ "module": "Neotec Recurring",
+ "issingle": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_scheduler",
+  "post_ahead_days",
+  "max_backdate_days",
+  "column_break_settings",
+  "max_attempts",
+  "large_schedule_threshold",
+  "notify_on_failure",
+  "notify_role"
+ ],
+ "fields": [
+  {
+   "fieldname": "enable_scheduler",
+   "fieldtype": "Check",
+   "label": "Enable Scheduler",
+   "default": "1"
+  },
+  {
+   "fieldname": "post_ahead_days",
+   "fieldtype": "Int",
+   "label": "Post Ahead (Days)",
+   "default": "0",
+   "description": "Post entries dated up to this many days in the future."
+  },
+  {
+   "fieldname": "max_backdate_days",
+   "fieldtype": "Int",
+   "label": "Maximum Backdating (Days)",
+   "default": "90",
+   "description": "Schedule rows older than this are skipped rather than posted into closed periods."
+  },
+  {
+   "fieldname": "column_break_settings",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "max_attempts",
+   "fieldtype": "Int",
+   "label": "Maximum Attempts Per Row",
+   "default": "3",
+   "description": "Stops a permanently broken row retrying forever."
+  },
+  {
+   "fieldname": "large_schedule_threshold",
+   "label": "Warn Above This Many Postings",
+   "fieldtype": "Int",
+   "default": "40",
+   "description": "A schedule producing more than this many entries has to be confirmed before it can be saved."
+  },
+  {
+   "fieldname": "notify_on_failure",
+   "fieldtype": "Check",
+   "label": "Notify On Failure",
+   "default": "1"
+  },
+  {
+   "fieldname": "notify_role",
+   "fieldtype": "Link",
+   "label": "Notify Role",
+   "options": "Role",
+   "default": "Accounts Manager",
+   "depends_on": "notify_on_failure"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ]
+}
